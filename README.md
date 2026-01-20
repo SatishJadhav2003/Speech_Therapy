@@ -87,7 +87,17 @@ src/app/
 npm install
 ```
 
-2. **Start JSON Server (Terminal 1):**
+2. **Setup Environment Configuration:**
+
+```bash
+# Copy the environment template
+cd src/environments
+cp environment.template.ts environment.ts
+```
+
+Then update `environment.ts` with your Firebase credentials. See `src/environments/README.md` for detailed instructions.
+
+3. **Start JSON Server (Terminal 1):**
 
 ```bash
 npm run api
@@ -95,7 +105,7 @@ npm run api
 
 This will start the mock API server at `http://localhost:3000`
 
-3. **Start Angular Dev Server (Terminal 2):**
+4. **Start Angular Dev Server (Terminal 2):**
 
 ```bash
 npm start
