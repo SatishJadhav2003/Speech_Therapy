@@ -1,0 +1,245 @@
+<div class="min-h-screen pb-20 bg-gray-50">
+  <!-- Header -->
+  <div class="bg-therapy-primary text-white p-6 shadow-lg">
+    <h1 class="text-2xl font-bold">Create Therapy Plan</h1>
+    <p class="text-indigo-100 text-sm mt-1">Schedule your practice session</p>
+  </div>
+
+  <!-- Form -->
+  <div class="p-4 space-y-4">
+    
+    <!-- Plan Type -->
+    <div class="card">
+      <label class="block text-sm font-medium text-gray-700 mb-3">Plan Type</label>
+      <div class="space-y-2">
+        <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+               [class.border-therapy-primary]="planType === 'instant'"
+               [class.bg-indigo-50]="planType === 'instant'">
+          <input 
+            type="radio" 
+            [(ngModel)]="planType"
+            value="instant"
+            (change)="onPlanTypeChange()"
+            name="planType"
+            class="w-5 h-5 text-therapy-primary focus:ring-therapy-primary"
+          />
+          <div class="ml-3">
+            <span class="font-medium text-gray-800">Instant Practice</span>
+            <p class="text-sm text-gray-600">Start practicing now</p>
+          </div>
+        </label>
+        
+        <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+               [class.border-therapy-primary]="planType === 'scheduled'"
+               [class.bg-indigo-50]="planType === 'scheduled'">
+          <input 
+            type="radio" 
+            [(ngModel)]="planType"
+            value="scheduled"
+            (change)="onPlanTypeChange()"
+            name="planType"
+            class="w-5 h-5 text-therapy-primary focus:ring-therapy-primary"
+          />
+          <div class="ml-3">
+            <span class="font-medium text-gray-800">Scheduled Session</span>
+            <p class="text-sm text-gray-600">Plan for a specific time</p>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Date & Time (for scheduled) -->
+    <div *ngIf="planType === 'scheduled'" class="card">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Date & Time</label>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <input 
+            type="date" 
+            [(ngModel)]="selectedDate"
+            name="date"
+            class="input-field"
+            [class.border-red-500]="errors.date"
+          />
+          <p *ngIf="errors.date" class="text-red-500 text-xs mt-1">{{ errors.date }}</p>
+        </div>
+        <div>
+          <input 
+            type="time" 
+            [(ngModel)]="selectedTime"
+            name="time"
+            class="input-field"
+            [class.border-red-500]="errors.time"
+          />
+          <p *ngIf="errors.time" class="text-red-500 text-xs mt-1">{{ errors.time }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercise Selection -->
+    <div class="card">
+      <div class="flex justify-between items-center mb-3">
+        <label class="text-sm font-medium text-gray-700">
+          Select Exercises <span class="text-red-500">*</span>
+        </label>
+        <button 
+          type="button"
+          (click)="addExercise()"
+          class="text-therapy-primary text-sm font-medium hover:underline"
+        >
+          + Add New
+        </button>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="mb-4">
+        <div class="relative">
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="filterExercises()"
+            name="searchQuery"
+            placeholder="Search exercises by name, description, or purpose..."
+            class="input-field pr-10"
+          />
+          <button 
+            *ngIf="searchQuery"
+            type="button"
+            (click)="clearSearch()"
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          >
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+        </div>
+        <div class="flex items-center justify-between mt-2 text-xs text-gray-600">
+          <span>{{ filteredExercises.length }} of {{ exercises.length }} exercises</span>
+          <div class="flex items-center space-x-3">
+            <button 
+              *ngIf="filteredExercises.length > 0"
+              type="button"
+              (click)="selectAllFiltered()"
+              class="font-medium text-therapy-primary hover:underline"
+            >
+              Select All
+            </button>
+            <button 
+              *ngIf="getSelectedCount() > 0"
+              type="button"
+              (click)="deselectAll()"
+              class="font-medium text-red-600 hover:underline"
+            >
+              Clear All ({{ getSelectedCount() }})
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="exercises.length === 0" class="text-center py-6 text-gray-500">
+        <p class="mb-3">No exercises available</p>
+        <button (click)="addExercise()" class="text-therapy-primary font-medium hover:underline">
+          Create your first exercise
+        </button>
+      </div>
+
+      <!-- No Results Message -->
+      <div *ngIf="exercises.length > 0 && !hasMatchingExercises()" class="text-center py-6 text-gray-500">
+        <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+        </svg>
+        <p class="font-medium mb-2">No exercises found</p>
+        <p class="text-sm">Try a different search term</p>
+        <button (click)="clearSearch()" class="mt-3 text-therapy-primary font-medium hover:underline">
+          Clear search
+        </button>
+      </div>
+
+      <!-- Exercise List with Max Height and Scroll -->
+      <div class="space-y-3 max-h-96 overflow-y-auto pr-2">
+        <div *ngFor="let item of filteredExercises" 
+             class="border-2 rounded-lg p-4 transition-all"
+             [class.border-therapy-primary]="item.selected"
+             [class.bg-indigo-50]="item.selected">
+          
+          <label class="flex items-start cursor-pointer">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="item.selected"
+              [name]="'exercise-' + item.exercise.id"
+              class="w-5 h-5 text-therapy-primary focus:ring-therapy-primary mt-1 flex-shrink-0"
+            />
+            <div class="ml-3 flex-1">
+              <div class="font-medium text-gray-800">{{ item.exercise.name }}</div>
+              <p *ngIf="item.exercise.description" class="text-sm text-gray-600 mt-1">
+                {{ item.exercise.description }}
+              </p>
+            </div>
+          </label>
+
+          <!-- Repetition Counter -->
+          <div *ngIf="item.selected" class="mt-3 pt-3 border-t border-gray-200">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Repetitions</label>
+            <div class="flex items-center space-x-3">
+              <button 
+                type="button"
+                (click)="item.repetitions = item.repetitions > 1 ? item.repetitions - 1 : 1"
+                class="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 active:scale-95 transition-all flex items-center justify-center font-bold text-gray-700"
+              >
+                -
+              </button>
+              <input 
+                type="number" 
+                [(ngModel)]="item.repetitions"
+                [name]="'reps-' + item.exercise.id"
+                min="1"
+                max="50"
+                class="w-20 text-center input-field"
+              />
+              <button 
+                type="button"
+                (click)="item.repetitions = item.repetitions + 1"
+                class="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 active:scale-95 transition-all flex items-center justify-center font-bold text-gray-700"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p *ngIf="errors.exercises" class="text-red-500 text-sm mt-2">{{ errors.exercises }}</p>
+    </div>
+
+    <!-- Summary -->
+    <div *ngIf="getSelectedExercises().length > 0" class="card bg-green-50 border-2 border-therapy-secondary">
+      <h3 class="font-semibold text-gray-800 mb-2">Plan Summary</h3>
+      <div class="space-y-1 text-sm text-gray-700">
+        <p>• {{ getSelectedExercises().length }} exercise(s) selected</p>
+        <p>• Total repetitions: {{ getTotalRepetitions() }}</p>
+        <p>• Type: {{ planType === 'instant' ? 'Instant Practice' : 'Scheduled Session' }}</p>
+        <p *ngIf="planType === 'scheduled'">• Scheduled for: {{ selectedDate }} at {{ selectedTime }}</p>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="space-y-3">
+      <button 
+        type="button"
+        (click)="onSubmit()"
+        [disabled]="loading || exercises.length === 0"
+        class="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {{ loading ? 'Creating Plan...' : 'Create Plan' }}
+      </button>
+      
+      <button 
+        type="button"
+        (click)="cancel()"
+        [disabled]="loading"
+        class="btn-outline w-full disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>

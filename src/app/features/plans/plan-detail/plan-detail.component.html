@@ -1,0 +1,140 @@
+<div class="min-h-screen pb-20 bg-gray-50">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex items-center justify-center min-h-screen">
+    <div class="text-center">
+      <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-therapy-primary mx-auto"></div>
+      <p class="mt-4 text-gray-600">Loading plan...</p>
+    </div>
+  </div>
+
+  <!-- Plan Details -->
+  <div *ngIf="!loading && plan">
+    <!-- Header -->
+    <div class="bg-therapy-primary text-white p-6 shadow-lg">
+      <button (click)="goBack()" class="mb-4 flex items-center text-indigo-100 hover:text-white">
+        <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+        </svg>
+        Back
+      </button>
+      <h1 class="text-2xl font-bold">Plan Details</h1>
+      <p class="text-indigo-100 text-sm mt-1">{{ formatDateTime(plan.date, plan.time) }}</p>
+    </div>
+
+    <!-- Content -->
+    <div class="p-4 space-y-4">
+      
+      <!-- Status Card -->
+      <div class="card">
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="text-sm font-medium text-gray-600 mb-1">Status</h3>
+            <span class="inline-block px-3 py-1 rounded-full text-sm font-medium"
+                  [class.bg-yellow-100]="plan.status === 'pending'"
+                  [class.text-yellow-800]="plan.status === 'pending'"
+                  [class.bg-green-100]="plan.status === 'active'"
+                  [class.text-green-800]="plan.status === 'active'"
+                  [class.bg-gray-100]="plan.status === 'completed'"
+                  [class.text-gray-800]="plan.status === 'completed'">
+              {{ plan.status | titlecase }}
+            </span>
+          </div>
+          <div class="text-right">
+            <h3 class="text-sm font-medium text-gray-600 mb-1">Type</h3>
+            <p class="text-gray-800 font-medium">
+              {{ plan.type === 'instant' ? 'Instant Practice' : 'Scheduled Session' }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completion Info -->
+      <div *ngIf="plan.status === 'completed' && plan.completedAt" class="card bg-green-50 border-2 border-therapy-secondary">
+        <div class="flex items-start">
+          <svg class="w-6 h-6 text-therapy-secondary mr-3 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          <div>
+            <h3 class="font-semibold text-gray-800">Completed!</h3>
+            <p class="text-sm text-gray-600 mt-1">
+              {{ formatCompletedDate(plan.completedAt) }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="card bg-blue-50 border-l-4 border-therapy-primary">
+        <h3 class="font-semibold text-gray-800 mb-3">Summary</h3>
+        <div class="space-y-2 text-sm text-gray-700">
+          <div class="flex justify-between">
+            <span>Total Exercises:</span>
+            <span class="font-medium">{{ planExercises.length }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Total Repetitions:</span>
+            <span class="font-medium">{{ getTotalRepetitions() }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Scheduled For:</span>
+            <span class="font-medium">{{ formatDateTime(plan.date, plan.time) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exercises List -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-semibold text-gray-800">Exercises in This Plan</h3>
+        
+        <div *ngFor="let pe of planExercises; let i = index" class="card hover:shadow-lg transition-shadow">
+          <div class="flex items-start">
+            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-therapy-primary text-white flex items-center justify-center font-bold mr-3">
+              {{ i + 1 }}
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-gray-800">{{ pe.exercise.name }}</h4>
+              <p *ngIf="pe.exercise.description" class="text-sm text-gray-600 mt-1">
+                {{ pe.exercise.description }}
+              </p>
+              <div *ngIf="pe.exercise.why" class="bg-blue-50 border-l-2 border-therapy-primary p-2 mt-2 rounded">
+                <p class="text-xs font-medium text-gray-600">Why this exercise?</p>
+                <p class="text-sm text-gray-700 mt-1">{{ pe.exercise.why }}</p>
+              </div>
+              <div class="mt-3 flex items-center text-therapy-primary">
+                <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                </svg>
+                <span class="font-semibold">{{ pe.repetitions }} repetitions</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-3 pt-4">
+        <button 
+          *ngIf="plan.status !== 'completed'"
+          (click)="startPlan()" 
+          class="btn-primary w-full"
+        >
+          Start This Plan
+        </button>
+
+        <button 
+          (click)="deletePlan()" 
+          class="w-full bg-red-500 text-white px-6 py-3 rounded-lg font-medium shadow-md hover:bg-red-600 active:scale-95 transition-all"
+        >
+          Delete Plan
+        </button>
+
+        <button 
+          (click)="goBack()" 
+          class="btn-outline w-full"
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

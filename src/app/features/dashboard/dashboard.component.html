@@ -1,0 +1,149 @@
+<div class="min-h-screen pb-20">
+  <!-- Header -->
+  <div class="bg-therapy-primary text-white p-6 shadow-lg">
+    <h1 class="text-2xl font-bold">Speech Therapy</h1>
+    <p class="text-indigo-100 text-sm mt-1">Your daily practice companion</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="p-6">
+    <div class="card animate-pulse">
+      <div class="h-24 bg-gray-200 rounded"></div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading" class="p-4 space-y-6">
+    
+    <!-- Current/Active Plan -->
+    <div *ngIf="currentPlan" class="space-y-3">
+      <h2 class="text-lg font-semibold text-gray-700 flex items-center">
+        <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+        Active Session
+      </h2>
+      <div class="card bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-therapy-secondary">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <p class="text-sm text-gray-600">{{ formatDateTime(currentPlan.date, currentPlan.time) }}</p>
+            <p class="text-xs text-gray-500 mt-1">{{ currentPlan.type === 'instant' ? 'Instant Practice' : 'Scheduled Session' }}</p>
+          </div>
+          <span class="bg-therapy-secondary text-white text-xs px-3 py-1 rounded-full font-medium">
+            Active
+          </span>
+        </div>
+        <div class="flex items-center space-x-4 mb-4">
+          <div class="flex items-center text-gray-700">
+            <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+              <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-sm font-medium">{{ getExerciseCount(currentPlan) }} exercises</span>
+          </div>
+          <div class="flex items-center text-gray-700">
+            <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-sm font-medium">{{ getTotalRepetitions(currentPlan) }} reps</span>
+          </div>
+        </div>
+        <button (click)="startPlan(currentPlan)" class="btn-secondary w-full">
+          Continue Session
+        </button>
+      </div>
+    </div>
+
+    <!-- Pending Plans -->
+    <div *ngIf="pendingPlans.length > 0" class="space-y-3">
+      <h2 class="text-lg font-semibold text-gray-700">Today's Practice</h2>
+      <div *ngFor="let plan of pendingPlans" class="card hover:shadow-lg transition-shadow">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <p class="text-sm text-gray-600">{{ formatDateTime(plan.date, plan.time) }}</p>
+            <p class="text-xs text-gray-500 mt-1">{{ plan.type === 'instant' ? 'Instant Practice' : 'Scheduled Session' }}</p>
+          </div>
+          <span class="bg-yellow-100 text-yellow-800 text-xs px-3 py-1 rounded-full font-medium">
+            Pending
+          </span>
+        </div>
+        <div class="flex items-center space-x-4 mb-4">
+          <div class="flex items-center text-gray-700">
+            <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+              <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-sm font-medium">{{ getExerciseCount(plan) }} exercises</span>
+          </div>
+          <div class="flex items-center text-gray-700">
+            <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-sm font-medium">{{ getTotalRepetitions(plan) }} reps</span>
+          </div>
+        </div>
+        <div class="flex space-x-2">
+          <button (click)="startPlan(plan)" class="btn-primary flex-1">
+            Start Plan
+          </button>
+          <button (click)="viewPlan(plan)" class="btn-outline flex-1">
+            View
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming Plans -->
+    <div *ngIf="upcomingPlans.length > 0" class="space-y-3">
+      <h2 class="text-lg font-semibold text-gray-700">Upcoming Sessions</h2>
+      <div *ngFor="let plan of upcomingPlans" class="card hover:shadow-lg transition-shadow opacity-90">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <p class="text-sm text-gray-600">{{ formatDateTime(plan.date, plan.time) }}</p>
+            <p class="text-xs text-gray-500 mt-1">Scheduled Session</p>
+          </div>
+          <span class="bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full font-medium">
+            Upcoming
+          </span>
+        </div>
+        <div class="flex items-center space-x-4 mb-4">
+          <div class="flex items-center text-gray-700">
+            <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+              <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-sm font-medium">{{ getExerciseCount(plan) }} exercises</span>
+          </div>
+          <div class="flex items-center text-gray-700">
+            <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-sm font-medium">{{ getTotalRepetitions(plan) }} reps</span>
+          </div>
+        </div>
+        <button (click)="viewPlan(plan)" class="btn-outline w-full">
+          View Details
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!currentPlan && pendingPlans.length === 0 && upcomingPlans.length === 0" 
+         class="text-center py-12">
+      <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+      </svg>
+      <h3 class="text-xl font-semibold text-gray-700 mb-2">No Plans Yet</h3>
+      <p class="text-gray-500 mb-6">Create your first therapy plan to get started</p>
+      <button (click)="createNewPlan()" class="btn-primary">
+        Create New Plan
+      </button>
+    </div>
+
+    <!-- Quick Action Button -->
+    <div *ngIf="pendingPlans.length > 0 || upcomingPlans.length > 0" class="pt-4">
+      <button (click)="createNewPlan()" class="btn-secondary w-full">
+        + Create New Plan
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,33 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Styles */
+body {
+  @apply bg-gray-50 text-gray-900;
+}
+
+/* Custom therapy-friendly styles */
+.btn-primary {
+  @apply bg-therapy-primary text-white px-6 py-3 rounded-lg font-medium shadow-md hover:bg-indigo-700 active:scale-95 transition-all;
+}
+
+.btn-secondary {
+  @apply bg-therapy-secondary text-white px-6 py-3 rounded-lg font-medium shadow-md hover:bg-green-600 active:scale-95 transition-all;
+}
+
+.btn-outline {
+  @apply border-2 border-therapy-primary text-therapy-primary px-6 py-3 rounded-lg font-medium hover:bg-therapy-primary hover:text-white active:scale-95 transition-all;
+}
+
+.card {
+  @apply bg-white rounded-xl shadow-md p-5 border border-gray-100;
+}
+
+.input-field {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-therapy-primary focus:border-transparent transition-all;
+}
+
+.counter-btn {
+  @apply w-48 h-48 rounded-full bg-therapy-primary text-white text-6xl font-bold shadow-2xl hover:bg-indigo-700 active:scale-90 transition-all flex items-center justify-center;
+}

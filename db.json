@@ -1,0 +1,115 @@
+{
+  "exercises": [
+    {
+      "id": "1",
+      "name": "Lip Stretch",
+      "description": "Stretch lips outward as wide as possible",
+      "why": "Improves articulation and lip muscle control"
+    },
+    {
+      "id": "2",
+      "name": "Tongue Up-Down",
+      "description": "Move tongue up to roof of mouth, then down",
+      "why": "Strengthens tongue muscles for better speech clarity"
+    },
+    {
+      "id": "3",
+      "name": "Say 'Ahhh'",
+      "description": "Open mouth wide and say 'Ahhh' for 5 seconds",
+      "why": "Improves vocal cord control and breath support"
+    }
+  ],
+  "plans": [
+    {
+      "id": "1",
+      "type": "instant",
+      "date": "2026-01-20",
+      "time": "10:30",
+      "status": "completed",
+      "exercises": [
+        {
+          "exerciseId": 1,
+          "repetitions": 5
+        },
+        {
+          "exerciseId": 2,
+          "repetitions": 8
+        }
+      ],
+      "completedAt": "2026-01-20T15:26:45.731Z"
+    },
+    {
+      "id": "268",
+      "type": "instant",
+      "date": "2026-01-20",
+      "time": "20:45",
+      "status": "completed",
+      "exercises": [
+        {
+          "exerciseId": 1,
+          "repetitions": 5
+        }
+      ],
+      "completedAt": "2026-01-20T15:20:58.269Z"
+    },
+    {
+      "id": "6",
+      "type": "instant",
+      "date": "2026-01-20",
+      "time": "20:56",
+      "status": "completed",
+      "exercises": [
+        {
+          "exerciseId": "1",
+          "repetitions": 7
+        }
+      ],
+      "completedAt": "2026-01-20T15:27:46.246Z"
+    },
+    {
+      "id": "28",
+      "type": "instant",
+      "date": "2026-01-20",
+      "time": "20:58",
+      "status": "completed",
+      "exercises": [
+        {
+          "exerciseId": "1",
+          "repetitions": 5
+        },
+        {
+          "exerciseId": "2",
+          "repetitions": 5
+        }
+      ],
+      "completedAt": "2026-01-20T15:28:50.398Z"
+    },
+    {
+      "id": "75",
+      "type": "instant",
+      "date": "2026-01-20",
+      "time": "20:59",
+      "status": "completed",
+      "exercises": [
+        {
+          "exerciseId": "3",
+          "repetitions": 5
+        }
+      ],
+      "completedAt": "2026-01-20T15:43:21.780Z"
+    },
+    {
+      "id": "00",
+      "type": "instant",
+      "date": "2026-01-20",
+      "time": "21:07",
+      "status": "pending",
+      "exercises": [
+        {
+          "exerciseId": "3",
+          "repetitions": 5
+        }
+      ]
+    }
+  ]
+}

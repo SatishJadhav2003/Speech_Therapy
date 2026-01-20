@@ -1,0 +1,163 @@
+<div class="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50">
+  
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex items-center justify-center min-h-screen">
+    <div class="text-center">
+      <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-therapy-primary mx-auto"></div>
+      <p class="mt-4 text-gray-600">Loading session...</p>
+    </div>
+  </div>
+
+  <!-- Start Screen -->
+  <div *ngIf="!loading && !sessionStarted && !sessionCompleted" class="min-h-screen flex flex-col items-center justify-center p-6">
+    <div class="card max-w-md w-full text-center">
+      <svg class="w-24 h-24 mx-auto text-therapy-primary mb-6" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+      </svg>
+      
+      <h2 class="text-2xl font-bold text-gray-800 mb-3">Ready to Practice?</h2>
+      <p class="text-gray-600 mb-6">You have {{ sessionExercises.length }} exercise(s) in this session</p>
+      
+      <div class="bg-blue-50 border-l-4 border-therapy-primary p-4 mb-6 text-left">
+        <h3 class="font-semibold text-gray-800 mb-2">Session Exercises:</h3>
+        <ul class="space-y-2">
+          <li *ngFor="let se of sessionExercises" class="flex justify-between text-sm text-gray-700">
+            <span>{{ se.exercise.name }}</span>
+            <span class="font-medium">{{ se.repetitions }} reps</span>
+          </li>
+        </ul>
+      </div>
+
+      <button (click)="startSession()" class="btn-primary w-full mb-3">
+        Start Session
+      </button>
+      
+      <button (click)="exitSession()" class="btn-outline w-full">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <!-- Active Session -->
+  <div *ngIf="sessionStarted && !sessionCompleted && currentExercise" class="min-h-screen flex flex-col">
+    
+    <!-- Progress Bar -->
+    <div class="bg-white shadow-md">
+      <div class="p-4">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm font-medium text-gray-700">
+            Exercise {{ currentExerciseIndex + 1 }} of {{ sessionExercises.length }}
+          </span>
+          <span class="text-sm font-medium text-therapy-primary">
+            {{ getProgressRounded() }}% Complete
+          </span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2">
+          <div 
+            class="bg-therapy-primary h-2 rounded-full transition-all duration-300"
+            [style.width.%]="getProgress()"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercise Content -->
+    <div class="flex-1 flex flex-col items-center justify-center p-6">
+      
+      <!-- Exercise Name -->
+      <h1 class="text-3xl font-bold text-gray-800 mb-4 text-center">
+        {{ currentExercise.exercise.name }}
+      </h1>
+
+      <!-- Description -->
+      <p *ngIf="currentExercise.exercise.description" 
+         class="text-gray-600 text-center mb-6 max-w-md">
+        {{ currentExercise.exercise.description }}
+      </p>
+
+      <!-- Counter Display -->
+      <div class="mb-8 text-center">
+        <div class="text-6xl font-bold mb-2"
+             [class.text-therapy-primary]="!currentExercise.isComplete"
+             [class.text-therapy-secondary]="currentExercise.isComplete">
+          {{ currentExercise.completed }}
+        </div>
+        <div class="text-2xl text-gray-500">
+          / {{ currentExercise.repetitions }}
+        </div>
+        <p class="text-sm text-gray-600 mt-2">
+          {{ currentExercise.isComplete ? 'Complete!' : 'Tap to count' }}
+        </p>
+      </div>
+
+      <!-- Counter Button -->
+      <button 
+        *ngIf="!currentExercise.isComplete"
+        (click)="incrementCounter()"
+        class="counter-btn mb-8"
+      >
+        TAP
+      </button>
+
+      <!-- Complete Indicator -->
+      <div *ngIf="currentExercise.isComplete" class="mb-8">
+        <svg class="w-48 h-48 text-therapy-secondary animate-bounce" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="w-full max-w-md space-y-3">
+        <div class="flex space-x-3">
+          <button 
+            (click)="previousExercise()"
+            [disabled]="currentExerciseIndex === 0"
+            class="flex-1 bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-medium hover:bg-gray-400 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            ← Previous
+          </button>
+          
+          <button 
+            (click)="nextExercise()"
+            class="flex-1 btn-primary"
+          >
+            {{ currentExerciseIndex === sessionExercises.length - 1 ? 'Finish' : 'Next →' }}
+          </button>
+        </div>
+
+        <button 
+          (click)="exitSession()"
+          class="w-full text-gray-600 text-sm py-2 hover:text-gray-800"
+        >
+          Exit Session
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completion Screen -->
+  <div *ngIf="sessionCompleted" class="min-h-screen flex flex-col items-center justify-center p-6">
+    <div class="card max-w-md w-full text-center">
+      <svg class="w-32 h-32 mx-auto text-therapy-secondary mb-6" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+      </svg>
+      
+      <h2 class="text-3xl font-bold text-gray-800 mb-3">Excellent Work!</h2>
+      <p class="text-gray-600 mb-6">You've completed your therapy session</p>
+      
+      <div class="bg-green-50 border-l-4 border-therapy-secondary p-4 mb-6 text-left">
+        <h3 class="font-semibold text-gray-800 mb-2">Session Summary:</h3>
+        <ul class="space-y-1 text-sm text-gray-700">
+          <li>• {{ sessionExercises.length }} exercise(s) completed</li>
+          <li>• {{ getTotalRepetitions() }} total repetitions</li>
+          <li>• Great job staying consistent!</li>
+        </ul>
+      </div>
+
+      <button (click)="exitSession()" class="btn-primary w-full">
+        Return to Home
+      </button>
+    </div>
+  </div>
+</div>

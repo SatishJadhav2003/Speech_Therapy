@@ -1,0 +1,79 @@
+<div class="min-h-screen pb-20 bg-gray-50">
+  <!-- Header -->
+  <div class="bg-therapy-primary text-white p-6 shadow-lg">
+    <h1 class="text-2xl font-bold">{{ isEditMode ? 'Edit Exercise' : 'Add Exercise' }}</h1>
+    <p class="text-indigo-100 text-sm mt-1">{{ isEditMode ? 'Update exercise details' : 'Create a new speech exercise' }}</p>
+  </div>
+
+  <!-- Form -->
+  <div class="p-4">
+    <form (ngSubmit)="onSubmit()" class="space-y-4">
+      
+      <!-- Exercise Name -->
+      <div class="card">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Exercise Name <span class="text-red-500">*</span>
+        </label>
+        <input 
+          type="text" 
+          [(ngModel)]="exercise.name"
+          name="name"
+          placeholder="e.g., Lip Stretch"
+          class="input-field"
+          [class.border-red-500]="errors.name"
+        />
+        <p *ngIf="errors.name" class="text-red-500 text-sm mt-1">{{ errors.name }}</p>
+      </div>
+
+      <!-- Description -->
+      <div class="card">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Short Description
+        </label>
+        <textarea 
+          [(ngModel)]="exercise.description"
+          name="description"
+          rows="3"
+          placeholder="How to perform this exercise..."
+          class="input-field resize-none"
+        ></textarea>
+        <p class="text-xs text-gray-500 mt-1">Optional: Brief instructions on how to do this exercise</p>
+      </div>
+
+      <!-- Why -->
+      <div class="card">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Why This Exercise?
+        </label>
+        <textarea 
+          [(ngModel)]="exercise.why"
+          name="why"
+          rows="3"
+          placeholder="The purpose and benefits..."
+          class="input-field resize-none"
+        ></textarea>
+        <p class="text-xs text-gray-500 mt-1">Optional: Explain the benefits and purpose</p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-3">
+        <button 
+          type="submit" 
+          [disabled]="loading"
+          class="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {{ loading ? 'Saving...' : (isEditMode ? 'Update Exercise' : 'Create Exercise') }}
+        </button>
+        
+        <button 
+          type="button" 
+          (click)="cancel()"
+          [disabled]="loading"
+          class="btn-outline w-full disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
