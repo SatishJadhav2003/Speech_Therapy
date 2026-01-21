@@ -1,0 +1,79 @@
+<div class="min-h-screen pb-20 bg-gray-50">
+  <!-- Header -->
+  <div class="bg-therapy-primary text-white p-6 shadow-lg">
+    <div class="flex items-center space-x-3 mb-2">
+      <button (click)="goBack()" class="p-1 hover:bg-white/10 rounded-lg transition-all">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h1 class="text-2xl font-bold">Exercise Details</h1>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="p-6">
+    <div class="card animate-pulse space-y-4">
+      <div class="h-8 bg-gray-200 rounded w-3/4"></div>
+      <div class="h-20 bg-gray-200 rounded"></div>
+      <div class="h-20 bg-gray-200 rounded"></div>
+    </div>
+  </div>
+
+  <!-- Exercise Details -->
+  <div *ngIf="!loading && exercise" class="p-4 space-y-4">
+    <!-- Name Card -->
+    <div class="card">
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ exercise.name }}</h2>
+      <div class="flex items-center space-x-2 text-sm text-gray-500">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <span>Exercise</span>
+      </div>
+    </div>
+
+    <!-- Description Card -->
+    <div *ngIf="exercise.description" class="card">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+        <svg class="w-5 h-5 mr-2 text-therapy-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        How to Perform
+      </h3>
+      <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ exercise.description }}</p>
+    </div>
+
+    <!-- Why Card -->
+    <div *ngIf="exercise.why" class="card bg-blue-50 border-l-4 border-therapy-primary">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+        <svg class="w-5 h-5 mr-2 text-therapy-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+        </svg>
+        Why This Exercise?
+      </h3>
+      <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ exercise.why }}</p>
+    </div>
+
+    <!-- No Description/Why Message -->
+    <div *ngIf="!exercise.description && !exercise.why" class="card text-center py-8">
+      <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+      <p class="text-gray-500 mb-4">No additional details available</p>
+      <button (click)="editExercise()" class="text-therapy-primary font-medium hover:underline">
+        Add Details
+      </button>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="space-y-3">
+      <button (click)="editExercise()" class="btn-primary w-full">
+        Edit Exercise
+      </button>
+      <button (click)="goBack()" class="btn-outline w-full">
+        Back to List
+      </button>
+    </div>
+  </div>
+</div>

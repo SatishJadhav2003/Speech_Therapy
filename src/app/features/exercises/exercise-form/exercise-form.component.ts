@@ -19,7 +19,7 @@ export class ExerciseFormComponent implements OnInit {
     why: ''
   };
   isEditMode = false;
-  exerciseId: number | null = null;
+  exerciseId: string | null = null;
   loading = false;
   errors: any = {};
 
@@ -33,19 +33,27 @@ export class ExerciseFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEditMode = true;
-      this.exerciseId = parseInt(id);
+      this.exerciseId = id;
       this.loadExercise();
     }
   }
 
   loadExercise(): void {
     if (this.exerciseId) {
+      this.loading = true;
       this.exerciseService.getExercise(String(this.exerciseId)).subscribe({
         next: (data) => {
-          this.exercise = data;
+          this.exercise = {
+            name: data.name || '',
+            description: data.description || '',
+            why: data.why || ''
+          };
+          this.loading = false;
+          console.log('Loaded exercise:', this.exercise);
         },
         error: (err: any) => {
           console.error('Error loading exercise:', err);
+          this.loading = false;
           this.router.navigate(['/exercises']);
         }
       });

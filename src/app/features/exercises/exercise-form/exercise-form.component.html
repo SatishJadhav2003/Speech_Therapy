@@ -7,7 +7,14 @@
 
   <!-- Form -->
   <div class="p-4">
-    <form (ngSubmit)="onSubmit()" class="space-y-4">
+    <!-- Loading State -->
+    <div *ngIf="loading && isEditMode" class="card animate-pulse">
+      <div class="h-12 bg-gray-200 rounded mb-4"></div>
+      <div class="h-24 bg-gray-200 rounded mb-4"></div>
+      <div class="h-24 bg-gray-200 rounded"></div>
+    </div>
+
+    <form *ngIf="!loading || !isEditMode" (ngSubmit)="onSubmit()" class="space-y-4">
       
       <!-- Exercise Name -->
       <div class="card">
