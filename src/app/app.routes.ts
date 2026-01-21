@@ -6,10 +6,12 @@ import { ExerciseDetailComponent } from './features/exercises/exercise-detail/ex
 import { PlanCreateComponent } from './features/plans/plan-create/plan-create.component';
 import { PlanDetailComponent } from './features/plans/plan-detail/plan-detail.component';
 import { SessionComponent } from './features/session/session.component';
+import { InsightsComponent } from './features/insights/insights.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
+  { path: 'insights', component: InsightsComponent },
   { path: 'exercises', component: ExerciseListComponent },
   { path: 'exercises/create', component: ExerciseFormComponent },
   { path: 'exercises/view/:id', component: ExerciseDetailComponent },
