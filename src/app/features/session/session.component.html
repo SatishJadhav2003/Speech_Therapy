@@ -65,14 +65,28 @@
     <!-- Exercise Content -->
     <div class="flex-1 flex flex-col items-center justify-center p-6">
       
+      <!-- Timer Toggle -->
+      <div class="mb-4 flex items-center space-x-3 bg-white rounded-lg px-4 py-2 shadow-sm">
+        <label class="flex items-center cursor-pointer">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="timerEnabled"
+            (change)="toggleTimer()"
+            class="sr-only peer"
+          />
+          <div class="relative w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-therapy-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-therapy-primary"></div>
+          <span class="ml-3 text-sm font-medium text-gray-700">15s Timer</span>
+        </label>
+      </div>
+
       <!-- Exercise Name -->
-      <h1 class="text-3xl font-bold text-gray-800 mb-4 text-center">
+      <h1 class="text-2xl font-bold text-gray-800 mb-2 text-center">
         {{ currentExercise.exercise.name }}
       </h1>
 
       <!-- Description -->
       <p *ngIf="currentExercise.exercise.description" 
-         class="text-gray-600 text-center mb-6 max-w-md">
+         class="text-sm text-gray-600 text-center mb-4 max-w-md">
         {{ currentExercise.exercise.description }}
       </p>
 
@@ -87,7 +101,7 @@
           / {{ currentExercise.repetitions }}
         </div>
         <p class="text-sm text-gray-600 mt-2">
-          {{ currentExercise.isComplete ? 'Complete!' : 'Tap to count' }}
+          {{ currentExercise.isComplete ? 'Complete!' : (timerEnabled ? 'Timer reps' : 'Tap to count') }}
         </p>
       </div>
 
@@ -95,14 +109,17 @@
       <button 
         *ngIf="!currentExercise.isComplete"
         (click)="incrementCounter()"
-        class="counter-btn mb-8"
+        class="counter-btn mb-8 transition-colors duration-300"
+        [class.opacity-50]="timerActive && timerEnabled"
+        [disabled]="timerActive"
+        [style.background-color]="timerEnabled && timerActive ? (timerRemaining > 5 ? '#6366f1' : timerRemaining > 0 ? '#f59e0b' : '#10b981') : '#6366f1'"
       >
-        TAP
+        {{ timerEnabled ? (timerActive ? timerRemaining + 's' : 'START') : 'TAP' }}
       </button>
 
       <!-- Complete Indicator -->
-      <div *ngIf="currentExercise.isComplete" class="mb-8">
-        <svg class="w-48 h-48 text-therapy-secondary animate-bounce" fill="currentColor" viewBox="0 0 20 20">
+      <div *ngIf="currentExercise.isComplete" class="mb-6">
+        <svg class="w-40 h-40 text-therapy-secondary animate-bounce" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
         </svg>
       </div>
