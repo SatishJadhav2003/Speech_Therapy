@@ -79,6 +79,25 @@
         </label>
       </div>
 
+      <!-- Voice Toggle -->
+      <div class="mb-4 flex items-center space-x-3 bg-white rounded-lg px-4 py-2 shadow-sm">
+        <label class="flex items-center cursor-pointer">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="voiceEnabled"
+            (change)="toggleVoice()"
+            class="sr-only peer"
+          />
+          <div class="relative w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-therapy-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-therapy-primary"></div>
+          <span class="ml-3 text-sm font-medium text-gray-700">
+            <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd"/>
+            </svg>
+            Voice Countdown
+          </span>
+        </label>
+      </div>
+
       <!-- Exercise Name -->
       <h1 class="text-2xl font-bold text-gray-800 mb-2 text-center">
         {{ currentExercise.exercise.name }}

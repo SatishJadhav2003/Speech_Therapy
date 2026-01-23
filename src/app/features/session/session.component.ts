@@ -30,13 +30,22 @@ export class SessionComponent implements OnInit, OnDestroy {
   timerRemaining = 15;
   timerActive = false;
   timerInterval: any = null;
+  
+  // Voice feature
+  speechSynthesis: SpeechSynthesis | null = null;
+  voiceEnabled = true; // Can be toggled by user
 
   constructor(
     private planService: PlanService,
     private exerciseService: ExerciseService,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    // Initialize speech synthesis if available
+    if ('speechSynthesis' in window) {
+      this.speechSynthesis = window.speechSynthesis;
+    }
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -113,25 +122,37 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.timerActive = true;
     this.timerRemaining = this.timerDuration;
     
+    // Speak the starting number
+    this.speak(this.timerRemaining.toString());
+    
     this.timerInterval = setInterval(() => {
       this.timerRemaining--;
       
-      if (this.timerRemaining <= 0) {
-        this.stopTimer();
-        // Increment counter after timer completes
-        const current = this.currentExercise;
-        if (current && current.completed < current.repetitions) {
-          current.completed++;
-          
-          if (current.completed >= current.repetitions) {
-            current.isComplete = true;
+      // Speak the countdown number
+      if (this.timerRemaining > 0) {
+        this.speak(this.timerRemaining.toString());
+      } else if (this.timerRemaining === 0) {
+        // Speak "Release" when timer finishes
+        this.speak('Release');
+        
+        // Wait a moment for "Release" to be spoken before stopping timer
+        setTimeout(() => {
+          this.stopTimer();
+          // Increment counter after timer completes
+          const current = this.currentExercise;
+          if (current && current.completed < current.repetitions) {
+            current.completed++;
             
-            // Auto-advance after a short delay
-            setTimeout(() => {
-              this.nextExercise();
-            }, 800);
+            if (current.completed >= current.repetitions) {
+              current.isComplete = true;
+              
+              // Auto-advance after a short delay
+              setTimeout(() => {
+                this.nextExercise();
+              }, 800);
+            }
           }
-        }
+        }, 500); // Give time for "Release" to be spoken
       }
     }, 1000);
   }
@@ -143,6 +164,58 @@ export class SessionComponent implements OnInit, OnDestroy {
     }
     this.timerActive = false;
     this.timerRemaining = this.timerDuration;
+    
+    // Cancel any ongoing speech
+    if (this.speechSynthesis) {
+      this.speechSynthesis.cancel();
+    }
+  }
+
+  speak(text: string): void {
+    if (!this.voiceEnabled || !this.speechSynthesis) return;
+    
+    // Cancel any ongoing speech first
+    this.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1.0; // Normal speed
+    utterance.pitch = 1.0; // Normal pitch
+    utterance.volume = 1.0; // Full volume
+    
+    // Optional: Select a specific voice (you can customize this)
+    const voices = this.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      // Try to find a female English voice
+      const femaleVoice = voices.find(voice => 
+        voice.lang.startsWith('en') && 
+        (voice.name.toLowerCase().includes('female') || 
+         voice.name.toLowerCase().includes('woman') ||
+         voice.name.includes('Samantha') ||
+         voice.name.includes('Zira') ||
+         voice.name.includes('Victoria'))
+      );
+      
+      if (femaleVoice) {
+        utterance.voice = femaleVoice;
+      } else {
+        // Fallback to any English voice
+        const englishVoice = voices.find(voice => voice.lang.startsWith('en'));
+        if (englishVoice) {
+          utterance.voice = englishVoice;
+        }
+      }
+    }
+    
+    this.speechSynthesis.speak(utterance);
+  }
+
+  toggleVoice(): void {
+    this.voiceEnabled = !this.voiceEnabled;
+    
+    // Cancel any ongoing speech when voice is disabled
+    if (!this.voiceEnabled && this.speechSynthesis) {
+      this.speechSynthesis.cancel();
+    }
   }
 
   incrementCounter(): void {
@@ -221,5 +294,10 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.stopTimer(); // Clean up on component destroy
+    
+    // Cancel any ongoing speech
+    if (this.speechSynthesis) {
+      this.speechSynthesis.cancel();
+    }
   }
 }
